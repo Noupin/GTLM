@@ -1,0 +1,14 @@
+{
+    "BUFFER_SIZE": 20000,
+    "BATCH_SIZE": 64,
+    "MAX_LENGTH": 40,
+    "EPOCHS": 5,
+
+    "num_layers": 6,
+    "d_model": 128,
+    "dff": 512,
+    "num_heads": 8,
+    "dropout_rate": 0.1,
+
+    "language": "portuguese"
+}
