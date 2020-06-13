@@ -12,15 +12,11 @@ from transformer import Transformer
 from customSchedule import CustomSchedule
 from tunable import Tunable
 from preprocessing import Preprocessing
+import utilities
 
 class Model():
 
     def __init__(self):
-        #Optimizer
-        '''
-        Use the Adam optimizer with a custom learning rate scheduler
-        '''
-
         self.prepro = Preprocessing()
         self.train_dataset = self.prepro.train_dataset
 
@@ -32,29 +28,16 @@ class Model():
         #Show the learning rate graphically
         self.temp_learning_rate_schedule = CustomSchedule(Tunable.tunableVars["d_model"])
 
-        #Loss & Metrics
-        '''
-        Since the target sequences are padded, it is important to apply a padding mask
-        when calculating the loss.
-        '''
-
-
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(
             name='train_accuracy')
 
-        #Training & Checkpointing
         self.transformer = Transformer(Tunable.tunableVars["num_layers"], Tunable.tunableVars["d_model"], Tunable.tunableVars["num_heads"], Tunable.tunableVars["dff"],
                                 self.prepro.input_vocab_size, self.prepro.target_vocab_size, 
                                 pe_input=self.prepro.input_vocab_size, 
                                 pe_target=self.prepro.target_vocab_size,
                                 rate=Tunable.tunableVars["dropout_rate"])
 
-
-        '''
-        Create the checkpoint path and the checkpoint manager.
-        This will be used to save checkpoints every n epochs.
-        '''
         self.checkpoint_path = r"C:\Coding\Python\ML\Text\transformerCheckpoints"
 
         self.ckpt = tf.train.Checkpoint(transformer=self.transformer,
@@ -62,42 +45,16 @@ class Model():
 
         self.ckpt_manager = tf.train.CheckpointManager(self.ckpt, self.checkpoint_path, max_to_keep=5)
 
-        # if a checkpoint exists, restore the latest checkpoint.
         if self.ckpt_manager.latest_checkpoint:
             self.ckpt.restore(self.ckpt_manager.latest_checkpoint)
             print ('Latest checkpoint restored!!')
-
-        '''
-        The target is divided into tar_inp and tar_real. tar_inp is passed as an input to the decoder.
-        tar_real is that same input shifted by 1: At each location in tar_input, tar_real contains the
-        next token that should be predicted.
-
-
-        For example, sentence = "SOS A lion in the jungle is sleeping EOS"
-
-        tar_inp = "SOS A lion in the jungle is sleeping"
-
-        tar_real = "A lion in the jungle is sleeping EOS"
-
-
-        The transformer is an auto-regressive model: it makes predictions one part at a time, and uses its
-        output so far to decide what to do next.
-
-        During training this example uses teacher-forcing. Teacher forcing is passing the true output to
-        the next time step regardless of what the model predicts at the current time step.
-
-        As the transformer predicts each word, self-attention allows it to look at the previous words in
-        the input sequence to better predict the next word.
-
-        To prevent the model from peeking at the expected output the model uses a look-ahead mask.
-        '''
 
     @tf.function(input_signature=[tf.TensorSpec(shape=(None, None), dtype=tf.int64), tf.TensorSpec(shape=(None, None), dtype=tf.int64),])
     def train_step(self, inp, tar):
         tar_inp = tar[:, :-1]
         tar_real = tar[:, 1:]
 
-        enc_padding_mask, combined_mask, dec_padding_mask = self.prepro.create_masks(inp, tar_inp)
+        enc_padding_mask, combined_mask, dec_padding_mask = utilities.create_masks(inp, tar_inp)
 
         with tf.GradientTape() as tape:
             predictions, _ = self.transformer(inp, tar_inp, 
@@ -145,7 +102,7 @@ class Model():
         output = tf.expand_dims(decoder_input, 0)
         
         for _ in range(Tunable.tunableVars["MAX_LENGTH"]):
-            enc_padding_mask, combined_mask, dec_padding_mask = self.prepro.create_masks(
+            enc_padding_mask, combined_mask, dec_padding_mask = utilities.create_masks(
                 encoder_input, output)
 
             # predictions.shape == (batch_size, seq_len, vocab_size)

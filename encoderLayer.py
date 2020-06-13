@@ -7,19 +7,7 @@ import tensorflow as tf
 from multiHeadAttention import MultiHeadAttention
 import utilities
 
-#Encoder Layer
-'''
-Each encoder layer consists of sublayers:
 
-    - Multi-head attention (with padding mask)
-    - Point wise feed forward networks.
-    
-Each of these sublayers has a residual connection around it followed by a layer normalization.
-Residual connections help in avoiding the vanishing gradient problem in deep networks.
-
-The output of each sublayer is LayerNorm(x + Sublayer(x)). The normalization is done
-on the d_model (last) axis. There are N encoder layers in the transformer.
-'''
 class EncoderLayer(tf.keras.layers.Layer):
 
     def __init__(self, d_model, num_heads, dff, rate=0.1):

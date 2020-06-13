@@ -9,7 +9,6 @@ from tunable import Tunable
 from preprocessing import Preprocessing
 from model import Model
 
-#Initializing project in W&B
 #wandb.init(project="lang2lang")
 
 model = Model()
@@ -53,6 +52,5 @@ print ("Real translation: and my neighboring homes heard about this idea .")
 model.translate("vou então muito rapidamente partilhar convosco algumas histórias de algumas coisas mágicas que aconteceram.")
 print ("Real translation: so i 'll just share with you some stories very quickly of some magical things that have happened .")
 
-#You can pass different layers and attention blocks of the decoder to the plot parameter.
 model.translate("este é o primeiro livro que eu fiz.", plot='decoder_layer4_block2')
 print ("Real translation: this is the first book i've ever done.")

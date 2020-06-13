@@ -8,26 +8,6 @@ from multiHeadAttention import MultiHeadAttention
 import utilities
 
 
-#Decoder Layer
-'''
-Each decoder layer consists of sublayers:
-
-    - Masked multi-head attention (with look ahead mask and padding mask)
-    - Multi-head attention (with padding mask). V (value) and K (key) receive the encoder output as inputs. Q (query) receives the output from the masked multi-head attention sublayer.
-    - Point wise feed forward networks
-
-Each of these sublayers has a residual connection around it followed by a layer normalization.
-The output of each sublayer is LayerNorm(x + Sublayer(x)). The normalization is done
-on the d_model (last) axis.
-
-There are N decoder layers in the transformer.
-
-As Q receives the output from decoder's first attention block, and K receives the encoder output,
-the attention weights represent the importance given to the decoder's input based on the
-encoder's output. In other words, the decoder predicts the next word by looking at the encoder
-output and self-attending to its own output. See the demonstration above in the scaled dot
-product attention section.
-'''
 class DecoderLayer(tf.keras.layers.Layer):
 
     def __init__(self, d_model, num_heads, dff, rate=0.1):

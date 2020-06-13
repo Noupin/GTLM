@@ -8,11 +8,6 @@ from encoder import Encoder
 from decoder import Decoder
 
 
-#Transformer
-'''
-Transformer consists of the encoder, decoder and a final linear layer. The output
-of the decoder is the input to the linear layer and its output is returned.
-'''
 class Transformer(tf.keras.Model):
 
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size, 

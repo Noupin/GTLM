@@ -6,27 +6,7 @@ import tensorflow as tf
 #First Party Import
 import utilities
 
-#Multi-Head Attention
-'''
-Multi-head attention consists of four parts:
 
-    - Linear layers and split into heads.
-    - Scaled dot-product attention.
-    - Concatenation of heads.
-    - Final linear layer.
-
-Each multi-head attention block gets three inputs; Q (query), K (key), V (value).
-These are put through linear (Dense) layers and split up into multiple heads.
-
-The scaled_dot_product_attention defined above is applied to each head (broadcasted for efficiency).
-An appropriate mask must be used in the attention step. The attention output for each head is then
-concatenated (using tf.transpose, and tf.reshape) and put through a final Dense layer.
-
-Instead of one single attention head, Q, K, and V are split into multiple heads because it
-allows the model to jointly attend to information at different positions from different
-representational spaces. After the split each head has a reduced dimensionality, so the total
-computation cost is the same as a single head attention with full dimensionality.
-'''
 class MultiHeadAttention(tf.keras.layers.Layer):
 
     def __init__(self, d_model, num_heads):
@@ -46,9 +26,6 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         self.dense = tf.keras.layers.Dense(d_model)
         
     def split_heads(self, x, batch_size):
-        """Split the last dimension into (num_heads, depth).
-        Transpose the result such that the shape is (batch_size, num_heads, seq_len, depth)
-        """
         x = tf.reshape(x, (batch_size, -1, self.num_heads, self.depth))
         return tf.transpose(x, perm=[0, 2, 1, 3])
 

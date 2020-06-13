@@ -8,18 +8,6 @@ from decoderLayer import DecoderLayer
 import utilities
 
 
-#Decoder
-'''
-The Decoder consists of:
-
-    - Output Embedding
-    - Positional Encoding
-    - N decoder layers
-
-The target is put through an embedding which is summed with the positional encoding.
-The output of this summation is the input to the decoder layers. The output of the decoder
-is the input to the final linear layer.
-'''
 class Decoder(tf.keras.layers.Layer):
 
     def __init__(self, num_layers, d_model, num_heads, dff, target_vocab_size,

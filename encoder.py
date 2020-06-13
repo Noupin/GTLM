@@ -8,18 +8,6 @@ from encoderLayer import EncoderLayer
 import utilities
 
 
-#Encoder
-'''
-The Encoder consists of:
-
-    - Input Embedding
-    - Positional Encoding
-    - N encoder layers
-
-The input is put through an embedding which is summed with the positional encoding. The output
-of this summation is the input to the encoder layers. The output of the encoder is the input to
-the decoder.
-'''
 class Encoder(tf.keras.layers.Layer):
 
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size,

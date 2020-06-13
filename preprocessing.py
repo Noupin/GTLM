@@ -21,9 +21,6 @@ class Preprocessing():
                                                  as_supervised=True)
         self.train_examples, self.val_examples = self.examples['train'], self.examples['validation']
 
-        #Creating subword Tokenizer from the training datset
-        #The tokenizer encodes the string by breaking it into subwords if the word is not in its dictionary
-
         #English
         if not os.path.exists(Constants.tokenizerPath + "english.subwords"):
             print("Creating English Subword Tokenizer.")
@@ -53,8 +50,7 @@ class Preprocessing():
 
         self.train_dataset = self.train_examples.map(self.tf_encode)
         self.train_dataset = self.train_dataset.filter(utilities.filter_max_length)
-        # cache the dataset to memory to get a speedup while reading from it.
-        self.train_dataset = self.train_dataset.cache()
+        self.train_dataset = self.train_dataset.cache() #cache the dataset to memory to get a speedup while reading from it.
         self.train_dataset = self.train_dataset.shuffle(Tunable.tunableVars["BUFFER_SIZE"]).padded_batch(Tunable.tunableVars["BATCH_SIZE"])
         self.train_dataset = self.train_dataset.prefetch(tf.data.experimental.AUTOTUNE)
 
@@ -70,7 +66,6 @@ class Preprocessing():
 
         self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
             from_logits=True, reduction='none')
-
     
     #Adding a start and end token to the input target
     def encode(self, lang1, lang2):
@@ -81,15 +76,7 @@ class Preprocessing():
             lang2.numpy()) + [self.tokenizer_en.vocab_size+1]
         
         return lang1, lang2
-    
-    '''
-    You want to use Dataset.map to apply this function to each element of the dataset.
-    Dataset.map runs in graph mode.
-    Graph tensors do not have a value.
-    In graph mode you can only use TensorFlow Ops and functions.
-    So you can't .map this function directly: You need to wrap it in a tf.py_function.
-    The tf.py_function will pass regular tensors (with a value and a .numpy() method to access it), to the wrapped python function.
-    '''
+
     def tf_encode(self, pt, en):
         result_pt, result_en = tf.py_function(self.encode, [pt, en], [tf.int64, tf.int64])
         result_pt.set_shape([None])
@@ -106,7 +93,6 @@ class Preprocessing():
 
         return tf.reduce_sum(loss_)/tf.reduce_sum(mask)
 
-
     def plot_attention_weights(self, attention, sentence, result, layer):
         fig = plt.figure(figsize=(16, 8))
 
@@ -117,7 +103,6 @@ class Preprocessing():
         for head in range(attention.shape[0]):
             ax = fig.add_subplot(2, 4, head+1)
 
-            # plot the attention weights
             ax.matshow(attention[head][:-1, :], cmap='viridis')
 
             fontdict = {'fontsize': 10}

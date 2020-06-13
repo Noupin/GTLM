@@ -3,9 +3,6 @@ __author__ = "Noupin, TensorFlow"
 #Third Party Imports
 import tensorflow as tf
 
-#First Party Import
-
-
 
 class PositionalEncoding(tf.keras.layers.Layer):
 
@@ -22,9 +19,9 @@ class PositionalEncoding(tf.keras.layers.Layer):
             position=tf.range(position, dtype=tf.float32)[:, tf.newaxis],
             i=tf.range(d_model, dtype=tf.float32)[tf.newaxis, :],
             d_model=d_model)
-        # apply sin to even index in the array
+
         sines = tf.math.sin(angle_rads[:, 0::2])
-        # apply cos to odd index in the array
+
         cosines = tf.math.cos(angle_rads[:, 1::2])
 
         pos_encoding = tf.concat([sines, cosines], axis=-1)
