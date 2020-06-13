@@ -5,6 +5,7 @@ import tensorflow as tf
 
 #First Party Import
 from encoderLayer import EncoderLayer
+import utilities
 
 
 #Encoder
@@ -22,18 +23,18 @@ the decoder.
 class Encoder(tf.keras.layers.Layer):
 
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size,
-                maximum_position_encoding, prepro, rate=0.1):
+                maximum_position_encoding, rate=0.1):
         super(Encoder, self).__init__()
 
         self.d_model = d_model
         self.num_layers = num_layers
 
         self.embedding = tf.keras.layers.Embedding(input_vocab_size, d_model)
-        self.pos_encoding = prepro.positional_encoding(maximum_position_encoding, 
+        self.pos_encoding = utilities.positional_encoding(maximum_position_encoding, 
                                                 self.d_model)
 
 
-        self.enc_layers = [EncoderLayer(d_model, num_heads, dff, prepro, rate) 
+        self.enc_layers = [EncoderLayer(d_model, num_heads, dff, rate) 
                             for _ in range(num_layers)]
 
         self.dropout = tf.keras.layers.Dropout(rate)

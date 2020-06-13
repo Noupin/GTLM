@@ -7,8 +7,6 @@ import tensorflow as tf
 from encoder import Encoder
 from decoder import Decoder
 
-#Third Party Imports
-from preprocessing import Preprocessing
 
 #Transformer
 '''
@@ -18,14 +16,14 @@ of the decoder is the input to the linear layer and its output is returned.
 class Transformer(tf.keras.Model):
 
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size, 
-                target_vocab_size, pe_input, pe_target, prepro, rate=0.1):
+                target_vocab_size, pe_input, pe_target, rate=0.1):
         super(Transformer, self).__init__()
 
         self.encoder = Encoder(num_layers, d_model, num_heads, dff, 
-                                input_vocab_size, pe_input, prepro, rate)
+                                input_vocab_size, pe_input, rate)
 
         self.decoder = Decoder(num_layers, d_model, num_heads, dff, 
-                                target_vocab_size, pe_target, prepro, rate)
+                                target_vocab_size, pe_target, rate)
 
         self.final_layer = tf.keras.layers.Dense(target_vocab_size)
 

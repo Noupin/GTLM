@@ -5,6 +5,7 @@ import tensorflow as tf
 
 #First Party Import
 from decoderLayer import DecoderLayer
+import utilities
 
 
 #Decoder
@@ -22,16 +23,16 @@ is the input to the final linear layer.
 class Decoder(tf.keras.layers.Layer):
 
     def __init__(self, num_layers, d_model, num_heads, dff, target_vocab_size,
-                maximum_position_encoding, prepro, rate=0.1):
+                maximum_position_encoding, rate=0.1):
         super(Decoder, self).__init__()
 
         self.d_model = d_model
         self.num_layers = num_layers
 
         self.embedding = tf.keras.layers.Embedding(target_vocab_size, d_model)
-        self.pos_encoding = prepro.positional_encoding(maximum_position_encoding, d_model)
+        self.pos_encoding = utilities.positional_encoding(maximum_position_encoding, d_model)
 
-        self.dec_layers = [DecoderLayer(d_model, num_heads, dff, prepro, rate) 
+        self.dec_layers = [DecoderLayer(d_model, num_heads, dff, rate) 
                             for _ in range(num_layers)]
         self.dropout = tf.keras.layers.Dropout(rate)
     

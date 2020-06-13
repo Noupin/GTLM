@@ -5,6 +5,7 @@ import tensorflow as tf
 
 #First Party Import
 from multiHeadAttention import MultiHeadAttention
+import utilities
 
 #Encoder Layer
 '''
@@ -21,11 +22,11 @@ on the d_model (last) axis. There are N encoder layers in the transformer.
 '''
 class EncoderLayer(tf.keras.layers.Layer):
 
-    def __init__(self, d_model, num_heads, dff, prepro, rate=0.1):
+    def __init__(self, d_model, num_heads, dff, rate=0.1):
         super(EncoderLayer, self).__init__()
 
-        self.mha = MultiHeadAttention(d_model, num_heads, prepro=prepro)
-        self.ffn = prepro.point_wise_feed_forward_network(d_model, dff)
+        self.mha = MultiHeadAttention(d_model, num_heads)
+        self.ffn = utilities.point_wise_feed_forward_network(d_model, dff)
 
         self.layernorm1 = tf.keras.layers.LayerNormalization(epsilon=1e-6)
         self.layernorm2 = tf.keras.layers.LayerNormalization(epsilon=1e-6)

@@ -5,6 +5,7 @@ import tensorflow as tf
 
 #First Party Import
 from multiHeadAttention import MultiHeadAttention
+import utilities
 
 
 #Decoder Layer
@@ -29,13 +30,13 @@ product attention section.
 '''
 class DecoderLayer(tf.keras.layers.Layer):
 
-    def __init__(self, d_model, num_heads, dff, prepro, rate=0.1):
+    def __init__(self, d_model, num_heads, dff, rate=0.1):
         super(DecoderLayer, self).__init__()
 
-        self.mha1 = MultiHeadAttention(d_model, num_heads, prepro=prepro)
-        self.mha2 = MultiHeadAttention(d_model, num_heads, prepro=prepro)
+        self.mha1 = MultiHeadAttention(d_model, num_heads)
+        self.mha2 = MultiHeadAttention(d_model, num_heads)
 
-        self.ffn = prepro.point_wise_feed_forward_network(d_model, dff)
+        self.ffn = utilities.point_wise_feed_forward_network(d_model, dff)
 
         self.layernorm1 = tf.keras.layers.LayerNormalization(epsilon=1e-6)
         self.layernorm2 = tf.keras.layers.LayerNormalization(epsilon=1e-6)

@@ -48,7 +48,6 @@ class Model():
                                 self.prepro.input_vocab_size, self.prepro.target_vocab_size, 
                                 pe_input=self.prepro.input_vocab_size, 
                                 pe_target=self.prepro.target_vocab_size,
-                                prepro=self.prepro,
                                 rate=Tunable.tunableVars["dropout_rate"])
 
 
@@ -93,16 +92,6 @@ class Model():
         To prevent the model from peeking at the expected output the model uses a look-ahead mask.
         '''
 
-        # The @tf.function trace-compiles train_step into a TF graph for faster
-        # execution. The function specializes to the precise shape of the argument
-        # tensors. To avoid re-tracing due to the variable sequence lengths or variable
-        # batch sizes (the last batch is smaller), use input_signature to specify
-        # more generic shapes.
-
-        self.train_step_signature = [
-            tf.TensorSpec(shape=(None, None), dtype=tf.int64),
-            tf.TensorSpec(shape=(None, None), dtype=tf.int64),
-        ]
     @tf.function(input_signature=[tf.TensorSpec(shape=(None, None), dtype=tf.int64), tf.TensorSpec(shape=(None, None), dtype=tf.int64),])
     def train_step(self, inp, tar):
         tar_inp = tar[:, :-1]

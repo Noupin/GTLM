@@ -4,7 +4,7 @@ __author__ = "Noupin, TensorFlow"
 import tensorflow as tf
 
 #First Party Import
-
+import utilities
 
 #Multi-Head Attention
 '''
@@ -29,10 +29,8 @@ computation cost is the same as a single head attention with full dimensionality
 '''
 class MultiHeadAttention(tf.keras.layers.Layer):
 
-    def __init__(self, d_model, num_heads, prepro):
+    def __init__(self, d_model, num_heads):
         super(MultiHeadAttention, self).__init__()
-
-        self.prepro = prepro
 
         self.num_heads = num_heads
         self.d_model = d_model
@@ -67,7 +65,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
         # scaled_attention.shape == (batch_size, num_heads, seq_len_q, depth)
         # attention_weights.shape == (batch_size, num_heads, seq_len_q, seq_len_k)
-        scaled_attention, attention_weights = self.prepro.scaled_dot_product_attention(
+        scaled_attention, attention_weights = utilities.scaled_dot_product_attention(
             q, k, v, mask)
 
         scaled_attention = tf.transpose(scaled_attention, perm=[0, 2, 1, 3])  # (batch_size, seq_len_q, num_heads, depth)
